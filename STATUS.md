@@ -15,6 +15,18 @@ Built overnight against `~/tercen/goals/2026-09-20-cytonorm.md`.
 The platform comparison is the one that matters: it covers the projection, the colour and label
 factors, the fit, the TSON the operator writes, the server's reading of it, and the export.
 
+## Published
+
+`0.1.0` is tagged and `ghcr.io/tercen/cytonorm_rust_operator:0.1.0` is pushed. **The package is
+private**, so nothing can pull it until it is made public in the package settings — there is no
+API for that. The release's install check failed the same way the other operators' do: the
+Actions token cannot fetch a zipball from a private repository. The image push itself succeeded.
+
+```
+https://github.com/orgs/tercen/packages/container/cytonorm_rust_operator/settings
+tercenctl operator install --repo https://github.com/tercen/cytonorm_rust_operator --tag 0.1.0 --team library
+```
+
 ## What is deliberately not here
 
 - **The self-organising map.** `cluster` above 1 is refused with a message pointing at
