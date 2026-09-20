@@ -14,7 +14,12 @@ const N_QUANTILES: usize = 99;
 fn read_csv(path: &str) -> (Vec<String>, Vec<Vec<String>>) {
     let text = std::fs::read_to_string(path).unwrap_or_else(|e| panic!("read {path}: {e}"));
     let mut lines = text.lines();
-    let header: Vec<String> = lines.next().unwrap().split(',').map(str::to_string).collect();
+    let header: Vec<String> = lines
+        .next()
+        .unwrap()
+        .split(',')
+        .map(str::to_string)
+        .collect();
     let rows = lines
         .filter(|l| !l.trim().is_empty())
         .map(|l| l.split(',').map(str::to_string).collect())
@@ -89,17 +94,20 @@ fn quantiles_and_goal_match_the_reference() {
 
     let (h, rows) = read_csv(&format!("{dir}quantiles.csv"));
     let idx = |n: &str| h.iter().position(|c| c == n).unwrap();
-    let (i_b, i_ch, i_i, i_q, i_g) = (idx("batch"), idx("channel"), idx("i"), idx("q"), idx("goal"));
+    let (i_b, i_ch, i_i, i_q, i_g) = (
+        idx("batch"),
+        idx("channel"),
+        idx("i"),
+        idx("q"),
+        idx("goal"),
+    );
 
     let (mut worst_q, mut worst_g, mut n) = (0.0f64, 0.0f64, 0usize);
     for r in &rows {
         let batch: usize = r[i_b].parse().unwrap();
         let c = input.channels.iter().position(|x| *x == r[i_ch]).unwrap();
         let i: usize = r[i_i].parse().unwrap();
-        let key = Key {
-            batch,
-            cluster: -1,
-        };
+        let key = Key { batch, cluster: -1 };
         let got_q = m.quantiles[&(key, c)][i];
         let got_g = m.goal[&(-1, c)][i];
         let (want_q, want_g): (f64, f64) = (r[i_q].parse().unwrap(), r[i_g].parse().unwrap());

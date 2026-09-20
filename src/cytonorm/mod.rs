@@ -90,7 +90,9 @@ impl Model {
         let mut goal: BTreeMap<(i64, usize), Vec<f64>> = BTreeMap::new();
         let mut counts: BTreeMap<(i64, usize), f64> = BTreeMap::new();
         for ((key, c), v) in &q {
-            let entry = goal.entry((key.cluster, *c)).or_insert_with(|| vec![0.0; v.len()]);
+            let entry = goal
+                .entry((key.cluster, *c))
+                .or_insert_with(|| vec![0.0; v.len()]);
             for (g, x) in entry.iter_mut().zip(v) {
                 *g += x;
             }
@@ -146,7 +148,10 @@ impl Model {
     }
 
     pub fn is_identity(&self, key: Key, channel: usize) -> bool {
-        matches!(self.splines.get(&(key, channel)), Some(Spline::Identity) | None)
+        matches!(
+            self.splines.get(&(key, channel)),
+            Some(Spline::Identity) | None
+        )
     }
 }
 
@@ -214,7 +219,10 @@ mod tests {
             .zip(take(1, true))
             .map(|(a, b)| (a - b).abs())
             .sum();
-        assert!(after < before / 10.0, "before {before:.3}, after {after:.3}");
+        assert!(
+            after < before / 10.0,
+            "before {before:.3}, after {after:.3}"
+        );
     }
 
     #[test]

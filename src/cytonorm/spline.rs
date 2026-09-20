@@ -133,7 +133,10 @@ mod tests {
 
     #[test]
     fn identity_when_there_is_nothing_to_map() {
-        assert!(matches!(Spline::fit(&[1.0, 1.0], &[2.0, 3.0]), Spline::Identity));
+        assert!(matches!(
+            Spline::fit(&[1.0, 1.0], &[2.0, 3.0]),
+            Spline::Identity
+        ));
         assert_eq!(Spline::Identity.eval(7.5), 7.5);
     }
 

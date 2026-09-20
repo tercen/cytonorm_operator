@@ -137,7 +137,10 @@ pub fn column_as_f64(bytes: &[u8], name: &str) -> Result<Vec<f64>> {
             bail!("table is not a map")
         };
         let values = find_column(&m, name).ok_or_else(|| {
-            anyhow!("column '{name}' not found (table has {:?})", column_names(&m))
+            anyhow!(
+                "column '{name}' not found (table has {:?})",
+                column_names(&m)
+            )
         })?;
         out.extend_from_slice(&as_f64(values, name)?);
     }
@@ -213,7 +216,10 @@ pub fn column_as_strings(bytes: &[u8], name: &str) -> Result<Vec<String>> {
             bail!("table is not a map")
         };
         let values = find_column(&m, name).ok_or_else(|| {
-            anyhow!("column '{name}' not found (table has {:?})", column_names(&m))
+            anyhow!(
+                "column '{name}' not found (table has {:?})",
+                column_names(&m)
+            )
         })?;
         out.extend(one_column_as_strings(values, name)?);
     }
@@ -443,7 +449,10 @@ impl Layout {
             channels,
             batch_of_column: batch_values.iter().map(|b| batch_index[b]).collect(),
             cluster_of_column: cluster_values.iter().map(|c| cluster_index[c]).collect(),
-            is_reference: type_values.iter().map(|t| *t == s.reference_value).collect(),
+            is_reference: type_values
+                .iter()
+                .map(|t| *t == s.reference_value)
+                .collect(),
             batch_labels,
             cluster_labels,
         })
@@ -471,7 +480,10 @@ impl Layout {
     }
 
     pub fn column_is_reference(&self, ci: i32) -> bool {
-        self.is_reference.get(ci.max(0) as usize).copied().unwrap_or(false)
+        self.is_reference
+            .get(ci.max(0) as usize)
+            .copied()
+            .unwrap_or(false)
     }
 }
 
@@ -504,7 +516,10 @@ fn pick(
             anyhow!("no {what} factor: {hint} (column factors present: {available:?})")
         })?
     };
-    if available.iter().any(|c| *c == name || c.ends_with(&format!(".{name}"))) {
+    if available
+        .iter()
+        .any(|c| *c == name || c.ends_with(&format!(".{name}")))
+    {
         Ok(name)
     } else {
         Err(anyhow!(
@@ -628,10 +643,7 @@ impl ReferenceSampler {
     pub fn finish(self) -> (BTreeMap<(Key, usize), Vec<f64>>, usize) {
         let n = self.groups.len();
         (
-            self.groups
-                .into_iter()
-                .map(|(k, r)| (k, r.keep))
-                .collect(),
+            self.groups.into_iter().map(|(k, r)| (k, r.keep)).collect(),
             n,
         )
     }
