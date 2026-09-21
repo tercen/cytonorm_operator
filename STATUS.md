@@ -27,11 +27,19 @@ https://github.com/orgs/tercen/packages/container/cytonorm_rust_operator/setting
 tercenctl operator install --repo https://github.com/tercen/cytonorm_rust_operator --tag 0.1.0 --team library
 ```
 
-## What is deliberately not here
+## Clustering, 2026-09-21
 
-- **The self-organising map.** `cluster` above 1 is refused with a message pointing at
-  `cluster_factor`, which takes labels from any upstream clusterer. One cluster is CytoNorm
-  without clustering.
+`cluster > 1` is still refused, and now for a better reason: clustering is its own step.
+`flowsom_rust_operator` is a drop-in for the R FlowSOM operator and bit-identical to it; project
+its `metacluster_id` and name that factor in `cluster_factor`. The refusal message says so.
+
+The multi-cluster path is now checked against cytonormpy rather than assumed:
+`tests/cluster_parity.rs` fits a spline per (batch, cluster, channel) over three KMeans clusters
+and matches **2.9e-14 over 108,000 values**. `tests/reference_parity.rs` cannot reach that — with
+no clusterer everything sits in cluster -1, so a spline fitted for the wrong triple would not
+show.
+
+## What is deliberately not here
 - **Real-data fixtures.** Everything committed is synthetic. The run-9 check belongs in a local
   run from a path in an environment variable, as `flowvs-rs` does it.
 

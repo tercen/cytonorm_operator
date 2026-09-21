@@ -14,13 +14,13 @@
   "urls": [
     "https://github.com/tercen/cytonorm_rust_operator"
   ],
-  "container": "ghcr.io/tercen/cytonorm_rust_operator:0.1.0",
+  "container": "ghcr.io/tercen/cytonorm_rust_operator:0.1.1",
   "properties": [
     {
       "kind": "DoubleProperty",
       "name": "cluster",
       "defaultValue": 1,
-      "description": "Number of FlowSOM clusters. Only 1 is supported: this version does not cluster. Project cluster labels and name them in cluster_factor to normalise per cluster."
+      "description": "Number of FlowSOM clusters. This operator does not cluster: clustering is its own step. Add a FlowSOM step upstream (flowsom_rust_operator, or the R flowsom_operator), project its metacluster column, and name that factor in cluster_factor. 1 is CytoNorm without clustering, which is a legitimate configuration."
     },
     {
       "kind": "DoubleProperty",
@@ -68,7 +68,7 @@
       "kind": "StringProperty",
       "name": "cluster_factor",
       "defaultValue": "",
-      "description": "Column factor holding a precomputed cluster label per cell, for example from the FlowSOM operator. Empty normalises with a single cluster."
+      "description": "Column factor holding a cluster label per cell, normally the metacluster_id from a FlowSOM step. A spline is then fitted per batch, cluster and channel. Empty normalises with a single cluster."
     },
     {
       "kind": "DoubleProperty",

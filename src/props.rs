@@ -8,9 +8,10 @@ use tercen_rs::context::ContextBase;
 
 #[derive(Debug, Clone)]
 pub struct Settings {
-    /// Number of FlowSOM clusters. **Only 1 is supported in this version**: the map is not
-    /// ported yet, and a single cluster is CytoNorm without clustering, which is a legitimate
-    /// configuration. A cluster factor can be projected instead (see `cluster_factor`).
+    /// Number of FlowSOM clusters. **This operator does not cluster**: clustering is its own
+    /// step, `flowsom_rust_operator` (or the R `flowsom_operator`), whose labels arrive here
+    /// through `cluster_factor`. Above 1 without such a factor is refused rather than ignored.
+    /// A single cluster is CytoNorm without clustering, which is a legitimate configuration.
     pub cluster: usize,
     /// Reference cells sampled per batch and cluster to fit the quantiles. CytoNorm subsamples
     /// for training; this is the same idea and it is what keeps the booking fixed.
@@ -78,9 +79,10 @@ pub fn settings_from_ctx(ctx: &ContextBase) -> Result<Settings> {
     if s.cluster > 1 && s.cluster_factor.is_empty() {
         bail!(
             "cluster = {} asks this operator to cluster the data with FlowSOM, which it does not \
-             do yet. Either leave cluster at 1 (CytoNorm without clustering), or project cluster \
-             labels and name that factor in 'cluster_factor' — labels from the R FlowSOM \
-             operator work.",
+             do: clustering is its own step. Add a FlowSOM step upstream — \
+             flowsom_rust_operator, or the R flowsom_operator — project its metacluster column, \
+             and name that factor in 'cluster_factor'. Or leave cluster at 1, which is CytoNorm \
+             without clustering.",
             s.cluster
         );
     }
