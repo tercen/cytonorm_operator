@@ -1,3 +1,14 @@
+## 0.1.2: the platform's unit test (2026-09-21)
+
+Faris asked whether the operators used the platform's test setup. This one did not.
+`tests/test.json` now projects `cytonorm_golden_long.csv` — three batches, three KMeans clusters
+from cytonormpy, channels on rows, cells on columns, the batch, type and cluster as column
+factors named through the properties — with a full fit (`number_of_cells = 0`), and diffs the
+assembled relations. Its expected values were taken from a Studio run and every one of the
+108,000 checked against cytonormpy's own output before being committed: worst relative
+difference **2.9e-14**. This is the only test that sees the result the way Tercen assembles it;
+`cargo test` stops at the bytes the operator writes.
+
 # cytonorm_rust_operator — status, morning of 2026-09-21
 
 Built overnight against `~/tercen/goals/2026-09-20-cytonorm.md`.

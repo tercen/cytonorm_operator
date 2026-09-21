@@ -13,6 +13,8 @@ tok = os.environ["TERCEN_TOKEN"]
 wf_id, schema_id = sys.argv[1], sys.argv[2]
 props = dict(a.split("=", 1) for a in sys.argv[3:])
 ROW, COL, Y, COLOR, LABEL = "channel", "cell_id", "value", "batch", "type"
+# extra column factors, e.g. a cluster label: DEV_EXTRA_COLS=cluster,file_name
+EXTRA = [c for c in os.environ.get("DEV_EXTRA_COLS", "").split(",") if c]
 
 c = TercenClient(os.environ.get("TERCEN_HTTP", "http://127.0.0.1:5402"))
 c.userService.tercenClient.token = tok
@@ -48,7 +50,7 @@ ds.state = m.StepState(); ds.state.taskId = ""; ds.state.taskState = m.InitState
 ct = m.Crosstab(); ct.taskId = ""
 ct.axis = m.XYAxisList(); ct.axis.rectangleSelections = []; ct.axis.xyAxis = []
 # the colour and the label are column factors as well, so their values reach the column table
-ct.columnTable = ctable([gf(COLOR, "string"), gf(LABEL, "string"), gf(COL, "double")])
+ct.columnTable = ctable([gf(COLOR, "string"), gf(LABEL, "string")] + [gf(c, "string") for c in EXTRA] + [gf(COL, "double")])
 ct.rowTable = ctable([gf(ROW, "string")])
 ct.filters = m.Filters(); ct.filters.removeNaN = False; ct.filters.namedFilters = []
 st = m.OperatorSettings(); st.namespace = "ds0"; st.environment = []
@@ -73,7 +75,7 @@ wf = c.workflowService.get(wf_id)
 ds = next(s for s in wf.steps if s.id == ds.id)
 q = m.CubeQuery()
 q.relation = ts.model.relation
-q.colColumns = [factor(COLOR, "string"), factor(LABEL, "string"), factor(COL, "double")]
+q.colColumns = [factor(COLOR, "string"), factor(LABEL, "string")] + [factor(c, "string") for c in EXTRA] + [factor(COL, "double")]
 q.rowColumns = [factor(ROW, "string")]
 aq = m.CubeAxisQuery(); aq.chartType = "point"; aq.pointSize = 4
 aq.xAxis = factor("", "string"); aq.yAxis = factor(Y, "double")
