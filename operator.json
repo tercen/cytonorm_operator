@@ -14,7 +14,7 @@
   "urls": [
     "https://github.com/tercen/cytonorm_rust_operator"
   ],
-  "container": "ghcr.io/tercen/cytonorm_rust_operator:0.1.2",
+  "container": "ghcr.io/tercen/cytonorm_rust_operator:0.1.3",
   "properties": [
     {
       "kind": "DoubleProperty",

@@ -1,6 +1,6 @@
 [package]
 name = "cytonorm_operator"
-version = "0.1.0"
+version = "0.1.3"
 edition = "2024"
 description = "CytoNorm batch normalisation for Tercen (Rust)"
 license = "GPL-2.0-or-later"

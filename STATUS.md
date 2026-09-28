@@ -1,10 +1,25 @@
+## 0.1.3: the expected tables in the platform's stored row order (2026-09-28)
+
+Installing 0.1.2 on Studio failed `cytonorm_three_clusters_full_fit` with
+`bad.value -- At column .ri -- at line 2 -- val = 1 refVal = 0`. Every value in the expected
+tables was right (they had been checked against cytonormpy), but their **row order** was not:
+`table1.csv` had been sorted row-major after export, and the platform compares each stored
+table line by line. A `(.ri, .ci)` result is stored in the order the operator wrote it, which is
+the order the crosstab streamed in — 2 x 2 blocks of channel by cell:
+`(0,0) (0,1) (1,0) (1,1) (0,2) (0,3) ...`.
+
+`tests/table1..3.csv` are now the tables of a Studio run of this operator on the test's own
+projection, exported with `tercenctl data export-csv` and not touched afterwards. All 108,000
+values agree with the previous fixtures exactly. Rule: expected tables for a `.ri/.ci` result
+come from a platform run and are never sorted or written by hand.
+
 ## 0.1.2: the platform's unit test (2026-09-21)
 
 Faris asked whether the operators used the platform's test setup. This one did not.
 `tests/test.json` now projects `cytonorm_golden_long.csv` — three batches, three KMeans clusters
 from cytonormpy, channels on rows, cells on columns, the batch, type and cluster as column
 factors named through the properties — with a full fit (`number_of_cells = 0`), and diffs the
-assembled relations. Its expected values were taken from a Studio run and every one of the
+assembled relations. Its expected values were taken from a Studio run (but re-sorted by hand, which 0.1.3 undoes) and every one of the
 108,000 checked against cytonormpy's own output before being committed: worst relative
 difference **2.9e-14**. This is the only test that sees the result the way Tercen assembles it;
 `cargo test` stops at the bytes the operator writes.
