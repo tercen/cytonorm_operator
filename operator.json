@@ -1,30 +1,180 @@
 {
   "name": "CytoNorm",
-  "description": "Performs normalisation of flow cytometry data.",
+  "description": "Batch normalisation for cytometry: per-batch quantiles of the batch controls, a monotone spline onto their average, applied to every cell. Rust port of cytonormpy as configured for the CYTOSHRINK runs.",
   "tags": [
+    "normalisation",
     "flow cytometry",
-    "preprocessing",
-    "normalisation"
+    "batch"
   ],
+  "communicationProtocol": "grpc",
   "authors": [
     "tercen"
   ],
   "urls": [
     "https://github.com/tercen/cytonorm_operator"
   ],
-  "container": "lucas501/cytonorm_docker:1.1.9",
+  "container": "ghcr.io/tercen/cytonorm_operator:2.0.0",
   "properties": [
     {
       "kind": "DoubleProperty",
       "name": "cluster",
-      "defaultValue": 10,
-      "description": "Number of cluster"
+      "defaultValue": 1,
+      "description": "Number of FlowSOM clusters. This operator does not cluster: clustering is its own step. Add a FlowSOM step upstream (flowsom_rust_operator, or the R flowsom_operator), project its metacluster column, and name that factor in cluster_factor. 1 is CytoNorm without clustering, which is a legitimate configuration."
     },
     {
       "kind": "DoubleProperty",
       "name": "number_of_cells",
       "defaultValue": 6000,
-      "description": "The total number of cells to subsample from the aggregated flowframe of all training data"
+      "description": "Reference cells sampled per batch, cluster and channel to fit the quantiles; 0 uses every reference cell. CytoNorm subsamples for training too, and this is what keeps the memory booking fixed."
+    },
+    {
+      "kind": "DoubleProperty",
+      "name": "n_quantiles",
+      "defaultValue": 99,
+      "description": "Number of quantiles. 99 is the setting the reference runs use; cytonormpy's notebook default is 101."
+    },
+    {
+      "kind": "DoubleProperty",
+      "name": "min_cells",
+      "defaultValue": 101,
+      "description": "Reference cells a batch and cluster needs before a spline is fitted at all. Below it the data is passed through unchanged."
+    },
+    {
+      "kind": "DoubleProperty",
+      "name": "seed",
+      "defaultValue": 1,
+      "description": "Seed for the reference subsample, so a fit is repeatable."
+    },
+    {
+      "kind": "StringProperty",
+      "name": "batch_factor",
+      "defaultValue": "",
+      "description": "Column factor holding the batch. Empty uses the first colour factor."
+    },
+    {
+      "kind": "StringProperty",
+      "name": "type_factor",
+      "defaultValue": "",
+      "description": "Column factor holding the type. Empty uses the first label factor."
+    },
+    {
+      "kind": "StringProperty",
+      "name": "reference_value",
+      "defaultValue": "Train",
+      "description": "Value in the type factor that marks a batch control. The R operator uses Train."
+    },
+    {
+      "kind": "StringProperty",
+      "name": "cluster_factor",
+      "defaultValue": "",
+      "description": "Column factor holding a cluster label per cell, normally the metacluster_id from a FlowSOM step. A spline is then fitted per batch, cluster and channel. Empty normalises with a single cluster."
+    },
+    {
+      "kind": "DoubleProperty",
+      "name": "collect_max_cells",
+      "defaultValue": 20000000,
+      "description": "Cells above which the result is streamed rather than buffered; 0 always streams."
     }
-  ]
+  ],
+  "operatorSpec": {
+    "kind": "OperatorSpec",
+    "ontologyUri": "https://tercen.com/_ontology/tercen",
+    "ontologyVersion": "0.0.1",
+    "inputSpecs": [
+      {
+        "kind": "CrosstabSpec",
+        "metaFactors": [
+          {
+            "kind": "MetaFactor",
+            "name": "Channel",
+            "type": "string",
+            "description": "Channel name, one per row.",
+            "ontologyMapping": "variable",
+            "crosstabMapping": "row",
+            "cardinality": "1",
+            "factors": []
+          },
+          {
+            "kind": "MetaFactor",
+            "name": "Cell",
+            "type": "",
+            "description": "Cell or event identifier, one per column, together with the batch and the type.",
+            "ontologyMapping": "observation",
+            "crosstabMapping": "column",
+            "cardinality": "1..n",
+            "factors": []
+          },
+          {
+            "kind": "MetaFactor",
+            "name": "Batch",
+            "type": "string",
+            "description": "Which batch each cell belongs to. Projected as a colour, as the R CytoNorm operator does, or named in the batch_factor property.",
+            "ontologyMapping": "",
+            "crosstabMapping": "color",
+            "cardinality": "0..1",
+            "factors": []
+          },
+          {
+            "kind": "MetaFactor",
+            "name": "Type",
+            "type": "string",
+            "description": "Which cells are batch controls: the value in reference_value (default Train) marks them. Projected as a label, or named in type_factor.",
+            "ontologyMapping": "",
+            "crosstabMapping": "label",
+            "cardinality": "0..1",
+            "factors": []
+          }
+        ],
+        "axis": [
+          {
+            "kind": "AxisSpec",
+            "metaFactors": [
+              {
+                "kind": "MetaFactor",
+                "name": "Measurement",
+                "type": "double",
+                "description": "Values to normalise, usually already arcsinh transformed.",
+                "ontologyMapping": "measurement",
+                "crosstabMapping": "y",
+                "cardinality": "1",
+                "factors": []
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "outputSpecsV2": [
+      {
+        "kind": "OperatorJoinSpec",
+        "joinOperators": [
+          {
+            "kind": "JoinOperator",
+            "joinType": "left",
+            "leftPair": {
+              "kind": "ColumnPair",
+              "lColumns": [
+                "Row",
+                "Column"
+              ],
+              "rColumns": [
+                "Row",
+                "Column"
+              ]
+            },
+            "rightRelation": {
+              "kind": "TableRelation",
+              "attributes": [
+                {
+                  "kind": "Attribute",
+                  "name": "cytonorm",
+                  "type": "double"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
 }
