@@ -1,18 +1,17 @@
 {
-  "name": "CytoNorm (Rust)",
+  "name": "CytoNorm",
   "description": "Batch normalisation for cytometry: per-batch quantiles of the batch controls, a monotone spline onto their average, applied to every cell. Rust port of cytonormpy as configured for the CYTOSHRINK runs.",
   "tags": [
     "normalisation",
     "flow cytometry",
-    "batch",
-    "rust"
+    "batch"
   ],
   "communicationProtocol": "grpc",
   "authors": [
     "tercen"
   ],
   "urls": [
-    "https://github.com/tercen/cytonorm_rust_operator"
+    "https://github.com/tercen/cytonorm_operator"
   ],
   "container": "ghcr.io/tercen/cytonorm_rust_operator:0.1.3",
   "properties": [

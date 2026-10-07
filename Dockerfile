@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.7
-# cytonorm_rust_operator — static tier (create-rust-operator §5): one musl binary on scratch.
+# cytonorm_operator — static tier (create-rust-operator §5): one musl binary on scratch.
 
 # ---- builder ----
 FROM rust:1.94-bookworm AS builder

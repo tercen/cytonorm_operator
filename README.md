@@ -1,8 +1,26 @@
-# cytonorm_rust_operator
+# cytonorm_operator
 
-Batch normalisation for cytometry in Tercen. Rust port of
-[`cytonormpy`](https://github.com/TarikExner/cytonormpy) 1.0.2, configured the way the
-CYTOSHRINK comparison runs configure it.
+Batch normalisation for cytometry in Tercen. **Version 2 is a Rust implementation and a
+replacement, not a port, of 1.x.** It follows
+[`cytonormpy`](https://github.com/TarikExner/cytonormpy) 1.0.2. The R implementation (1.x, which
+wrapped R CytoNorm and clustered internally with FlowSOM) is kept on the
+[`r-legacy`](https://github.com/tercen/cytonorm_operator/tree/r-legacy) branch and the
+`r-legacy-1.2.2` tag. 2.0 was developed as `tercen/cytonorm_rust_operator` and merged here with
+its history.
+
+## Changes from 1.x
+
+- **No internal clustering.** 1.x ran FlowSOM inside the operator (`cluster`, default 10). 2.0
+  takes cluster labels from a column factor (`cluster_factor`), typically from the FlowSOM
+  operator (2.x has `train_factor` for clustering on the batch controls, as CytoNorm does).
+  `cluster` must be 1; a 1.x step with `cluster` = 10 fails with a message saying what to do.
+- **Different output.** 2.0 writes one `cytonorm` value per crosstab cell (joined on row and
+  column), like any transform. 1.x returned the normalised data as a wide table.
+- **Numerics follow cytonormpy**: matched to 2.1e-13 over the reference fixtures and 2.9e-14
+  across three clusters. 1.x's unit test compares R CytoNorm's output, so it does not carry over.
+- **New properties:** `n_quantiles`, `min_cells`, `seed`, `batch_factor`, `type_factor`,
+  `reference_value`, `cluster_factor`, `collect_max_cells`.
+- **gRPC operator**, static image; needs a Tercen server with gRPC operator support.
 
 ## What it does
 
@@ -13,8 +31,7 @@ moves it back.
 
 ## Input
 
-The projection follows the R [`cytonorm_operator`](https://github.com/tercen/cytonorm_operator),
-so a workflow can swap one for the other:
+The projection follows the 1.x operator's (rows, columns, colours = batch, labels = type):
 
 | | |
 |---|---|

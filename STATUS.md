@@ -24,7 +24,7 @@ assembled relations. Its expected values were taken from a Studio run (but re-so
 difference **2.9e-14**. This is the only test that sees the result the way Tercen assembles it;
 `cargo test` stops at the bytes the operator writes.
 
-# cytonorm_rust_operator — status, morning of 2026-09-21
+# cytonorm_operator — status, morning of 2026-09-21
 
 Built overnight against `~/tercen/goals/2026-09-20-cytonorm.md`.
 
@@ -43,14 +43,14 @@ factors, the fit, the TSON the operator writes, the server's reading of it, and 
 
 ## Published
 
-`0.1.0` is tagged and `ghcr.io/tercen/cytonorm_rust_operator:0.1.0` is pushed. **The package is
+`0.1.0` is tagged and `ghcr.io/tercen/cytonorm_operator:0.1.0` is pushed. **The package is
 private**, so nothing can pull it until it is made public in the package settings — there is no
 API for that. The release's install check failed the same way the other operators' do: the
 Actions token cannot fetch a zipball from a private repository. The image push itself succeeded.
 
 ```
-https://github.com/orgs/tercen/packages/container/cytonorm_rust_operator/settings
-tercenctl operator install --repo https://github.com/tercen/cytonorm_rust_operator --tag 0.1.0 --team library
+https://github.com/orgs/tercen/packages/container/cytonorm_operator/settings
+tercenctl operator install --repo https://github.com/tercen/cytonorm_operator --tag 0.1.0 --team library
 ```
 
 ## Clustering, 2026-09-21

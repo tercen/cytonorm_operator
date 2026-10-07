@@ -1,6 +1,6 @@
 # Licensing
 
-`cytonorm_rust_operator` is **GPL-2.0-or-later**.
+`cytonorm_operator` is **GPL-2.0-or-later**.
 
 It was AGPL-3.0 until 2026-09-21. The change is not cosmetic: it is what lets the operator link
 [`flowsom-rs`](https://github.com/tercen/flowsom-rs) and so cluster, and it was made deliberately
