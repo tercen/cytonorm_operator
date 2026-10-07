@@ -1,0 +1,49 @@
+{
+  "kind": "OperatorUnitTest",
+  "name": "cytonorm_three_clusters_full_fit",
+  "namespace": "ds0",
+  "inputDataUri": "cytonorm_golden_long.csv",
+  "outputDataUri": [
+    "table1.csv",
+    "table2.csv",
+    "table3.csv"
+  ],
+  "columns": [
+    "batch",
+    "type",
+    "cluster",
+    "cell_id"
+  ],
+  "rows": [
+    "channel"
+  ],
+  "colors": [],
+  "labels": [],
+  "yAxis": "value",
+  "xAxis": "",
+  "generatedOn": "09/21/2026 07:40:00 PM 2026",
+  "version": "",
+  "propertyValues": [
+    {
+      "kind": "PropertyValue",
+      "name": "cluster_factor",
+      "value": "cluster"
+    },
+    {
+      "kind": "PropertyValue",
+      "name": "batch_factor",
+      "value": "batch"
+    },
+    {
+      "kind": "PropertyValue",
+      "name": "type_factor",
+      "value": "type"
+    },
+    {
+      "kind": "PropertyValue",
+      "name": "number_of_cells",
+      "value": "0"
+    }
+  ],
+  "absTol": 1e-09
+}
