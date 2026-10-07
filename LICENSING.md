@@ -28,11 +28,11 @@ Tercen SDK crates are MIT.
 | FlowSOM, R's `hclust` | GPL (>= 2) | would allow GPL-3; not the binding constraint |
 | cytonormpy (the reference this was ported from) | MIT | no obligation |
 | CytoNorm (R) | GPL (>= 2) | not ported here |
-| tercen-rs, rustson | MIT | no obligation |
+| tercen-rs | Apache-2.0 (since 2026-10-08) | GPL-3 compatible; with or-later the binary is distributable as GPL-3 |
+| rustson | none yet (tercen/rustson#1 proposes Apache-2.0) | pending |
 
 ## The sibling operators
 
-`asinh_rust_operator` and `flowvs-rs` are AGPL-3.0 and stay that way: they have no GPL-2-only
-dependency, so nothing forces a change. Note for later — **if asinh ever wants FlowSOM, it hits
-this same wall** and would have to move to GPL-2-or-later first. `read_fcs_rust_operator` is
+`asinh_rust_operator` and `flowvs-rs` moved from AGPL-3.0 to GPL-2.0-or-later on 2026-10-08, so
+asinh could link FlowSOM if it ever needs to. `umap_rust_operator` moved from AGPL-3.0 to Apache-2.0. `read_fcs_rust_operator` is
 Apache-2.0 and has no copyleft dependency at all.
